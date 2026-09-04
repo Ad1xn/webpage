@@ -539,3 +539,24 @@ footer p { margin: 0; font-family: var(--mono); font-size: 10.5px; letter-spacin
 .dot    { fill: var(--ink-soft); stroke: none; }
 .dotac  { fill: var(--accent); stroke: none; }
 .wash   { fill: var(--accent-wash); stroke: none; }
+
+/* ---------- domain banner image ------------------------------ */
+
+.dbanner { margin: 26px 0 0; border: 1px solid var(--line-strong); overflow: hidden; }
+.dbanner img { display: block; width: 100%; height: auto; }
+
+/* The source image is bright; hold it back a little on the dark ground. */
+:root[data-theme="dark"] .dbanner img { filter: brightness(.82) contrast(1.04); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dbanner img { filter: brightness(.82) contrast(1.04); }
+}
+
+/* On a phone the full frame is mostly empty sky, so crop to one subject —
+   the arm or the humanoid, chosen per visit. */
+@media (max-width: 760px) {
+  /* A taller box crops harder horizontally under object-fit:cover — at 340px
+     only ~57% of the frame is visible, enough to isolate one subject. */
+  .dbanner img { height: 340px; object-fit: cover; object-position: 50% 50%; }
+  .dbanner.crop-arm img      { object-position: 2% 56%; }
+  .dbanner.crop-humanoid img { object-position: 97% 46%; }
+}
