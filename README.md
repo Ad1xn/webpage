@@ -15,7 +15,7 @@ what gets served.
 | `style.css` | Shared stylesheet for all three pages. |
 | `legal.js` | Theme + language toggle for the legal pages. |
 | `fonts/` | IBM Plex, self-hosted (SIL OFL 1.1). |
-| `.htaccess` | Apache rules. Inert on Deploy Now; kept for classic hosting. |
+| `CNAME` | Custom domain for GitHub Pages. |
 
 ## Design notes
 
