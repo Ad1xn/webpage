@@ -1,0 +1,19 @@
+# Force HTTPS and the canonical hostname (www -> apex).
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://andre-uhl.de/$1 [R=301,L]
+  RewriteCond %{HTTP_HOST} ^www\.andre-uhl\.de$ [NC]
+  RewriteRule ^(.*)$ https://andre-uhl.de/$1 [R=301,L]
+</IfModule>
+
+# Cache the fonts/CSS the page pulls, but always revalidate the page itself.
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+ErrorDocument 404 /index.html
