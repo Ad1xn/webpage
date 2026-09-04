@@ -669,12 +669,20 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
 
   /* ---- drafting crosshair ------------------------------------ */
-  if (window.matchMedia('(pointer: fine)').matches && !mqM.matches && window.innerWidth >= 1024) {
-    var xh = document.getElementById('xh');
-    var xv = document.getElementById('xhV');
+  /* Conditions are re-checked on every move, not once at load, so the
+     crosshair appears if the window is later widened and disappears if it
+     is narrowed — and it survives a load at width 0 (hidden tab). */
+  (function () {
+    var xh  = document.getElementById('xh');
+    var xv  = document.getElementById('xhV');
     var xhh = document.getElementById('xhH');
-    var xr = document.getElementById('xhR');
+    var xr  = document.getElementById('xhR');
+    var fine = window.matchMedia('(pointer: fine)');
     var mx = 0, my = 0, pending = false;
+
+    function allowed() {
+      return fine.matches && !mqM.matches && window.innerWidth >= 1024;
+    }
 
     function draw() {
       pending = false;
@@ -688,13 +696,15 @@
     }
 
     window.addEventListener('mousemove', function (e) {
+      if (!allowed()) { xh.classList.remove('on'); return; }
       mx = e.clientX; my = e.clientY;
       xh.classList.add('on');
       if (!pending) { pending = true; requestAnimationFrame(draw); }
     }, { passive: true });
 
     document.addEventListener('mouseleave', function () { xh.classList.remove('on'); });
-  }
+  })();
+
 })();
 </script>
 
