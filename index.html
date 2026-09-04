@@ -39,6 +39,12 @@
 <div class="rules" aria-hidden="true"><div class="rules-inner"><span></span></div></div>
 <div class="sheet-frame" aria-hidden="true"></div>
 
+<div class="xhair" id="xh" aria-hidden="true">
+  <div class="xh-v" id="xhV"></div>
+  <div class="xh-h" id="xhH"></div>
+  <div class="xh-r" id="xhR">X 0000 · Y 0000</div>
+</div>
+
 <div class="gauge" aria-hidden="true">
   <div class="gauge-track"></div>
   <div class="gauge-tick" id="gTick"></div>
@@ -378,6 +384,7 @@
   var root = document.documentElement;
   var btn  = document.getElementById('themeBtn');
   var mqD  = window.matchMedia('(prefers-color-scheme: dark)');
+  var mqM  = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   /* ---- theme -------------------------------------------------- */
   function isDark() {
@@ -660,6 +667,34 @@
   measure();
   window.addEventListener('resize', measure);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+  /* ---- drafting crosshair ------------------------------------ */
+  if (window.matchMedia('(pointer: fine)').matches && !mqM.matches && window.innerWidth >= 1024) {
+    var xh = document.getElementById('xh');
+    var xv = document.getElementById('xhV');
+    var xhh = document.getElementById('xhH');
+    var xr = document.getElementById('xhR');
+    var mx = 0, my = 0, pending = false;
+
+    function draw() {
+      pending = false;
+      xv.style.transform  = 'translateX(' + mx + 'px)';
+      xhh.style.transform = 'translateY(' + my + 'px)';
+      var flipX = mx > window.innerWidth - 130;
+      var flipY = my > window.innerHeight - 40;
+      xr.style.transform = 'translate(' + (mx + (flipX ? -122 : 12)) + 'px,' + (my + (flipY ? -30 : 12)) + 'px)';
+      xr.textContent = 'X ' + String(Math.round(mx)).padStart(4, '0') +
+                       ' · Y ' + String(Math.round(my)).padStart(4, '0');
+    }
+
+    window.addEventListener('mousemove', function (e) {
+      mx = e.clientX; my = e.clientY;
+      xh.classList.add('on');
+      if (!pending) { pending = true; requestAnimationFrame(draw); }
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', function () { xh.classList.remove('on'); });
+  }
 })();
 </script>
 
